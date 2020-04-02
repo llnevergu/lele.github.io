@@ -1,26 +1,52 @@
 ---
 layout: post
-title: 'Hello Jekyll'
-date: 2017-04-18
-author: Jekyll
+title: 'Hello woniu'
+date: 2020-04-02
+author: woniu
 cover: 'http://on2171g4d.bkt.clouddn.com/jekyll-banner.png'
-tags: jekyll
+tags: woniu
 ---
 
-> Transform your plain text into static websites and blogs.
+> 通过ReetrantLock了解AQS.
 
-### Welcome
+### 先看下AQS的数据结构
 
-This site aims to be a comprehensive guide to Jekyll. We’ll cover topics such as getting your site up and running, creating and managing your content, customizing the way your site works and looks, deploying to various environments, and give you some advice on participating in the future development of Jekyll itself.
+数据结构的解释：
+exclusiveOwnerThread: 用于存储当前持有锁的线程
+state: 0表示没有线程持有锁，
+          大于0的话，分两种情况：
+            1）对于独占锁，state代表重入次数；
+            2）对于共享锁，可用于表示当前还有多少线程持久锁（描述可能不准确）
+Node节点：是一个双向链表，用于存储阻塞等待的线程相关数据，
+            数据区有三个字段：
+            waitStatus表示对应节点（也用于后继节点）的状态；
+            thread指向对应的线程；
+            nextWaiter:解释见上图文本说明，
+ps：关于共享和独占模式，这里有个比较灵性的涉及，如果nextWaiter为null，则为独占，否则为共享模式；
+这样有个好处，使用ReetrantLock的过程中，将节点从条件队列移入至同步队列中时，将节点的nextWaiter置为null即可
 
-### So what is Jekyll, exactly?Permalink
+### 类图
 
-Jekyll is a simple, blog-aware, static site generator. It takes a template directory containing raw text files in various formats, runs it through a converter (like [Markdown](https://daringfireball.net/projects/markdown/)) and our [Liquid](https://github.com/Shopify/liquid/wiki) renderer, and spits out a complete, ready-to-publish static website suitable for serving with your favorite web server. Jekyll also happens to be the engine behind GitHub Pages, which means you can use Jekyll to host your project’s page, blog, or website from GitHub’s servers for free.
 
-### Helpful HintsPermalink
 
-Throughout this guide there are a number of small-but-handy pieces of information that can make using Jekyll easier, more interesting, and less hazardous. Here’s what to look out for.
+### 代码段
 
-### Video Test
+static ReetrantLock lock = new ReetrantLock();
+void method1() {
+    try{
+        lock.lock();
+        // do sth …
+        
+    } finally {
+        lock.unlock();
+    }
+}
 
-<iframe type="text/html" width="100%" height="385" src="http://www.youtube.com/embed/gfmjMWjn-Xg" frameborder="0"></iframe>
+### 先来个最简单的场景
+t1 获取锁
+t2 尝试获取锁，被阻塞；
+t1 释放锁；
+t2 获取锁成功；
+t3 尝试获取锁，被阻塞；
+
+### 来直观感受下AQS的同步队列变化情况：
