@@ -35,8 +35,7 @@ static ReetrantLock lock = new ReetrantLock();
 void method1() {
     try{
         lock.lock();
-        // do sth …
-        
+        // do sth...
     } finally {
         lock.unlock();
     }
