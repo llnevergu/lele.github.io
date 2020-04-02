@@ -2,7 +2,7 @@
 title: '蜗牛的独立博客'
 description: '很高兴能在这里与你分享我对技术和生活的思考。'
 keyword: '蜗牛的独立博客, 蜗牛的博客, java, 分布式, 中间件, myql, 设计'
-url: '' # your host
+url: 'http://llnevergiveup.com' # your host
 
 # when build blog on server, if you don't need baseurl, you should leave this value blank.
 # 在服务器上建站时，如果你不需要子域名，请将这一格留空
